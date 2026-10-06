@@ -1,0 +1,6 @@
+{
+  "name": "صفحة الأسئلة - Questions Page",
+  "description": "صفحة لطرح وصياغة الأسئلة بالذكاء الاصطناعي وإرسالها مباشرة عبر الـ API إلى لوحة العرض.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

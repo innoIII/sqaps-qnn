@@ -1,0 +1,60 @@
+// Prisma schema file for Live Lecture AI Question Portal & Dashboard
+// Expandable to PostgreSQL, Supabase, MySQL, or SQLite
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QuestionStatus {
+  NEW
+  ANSWERED
+  ARCHIVED
+}
+
+model Question {
+  id            String         @id @default(cuid())
+  question      String
+  status        QuestionStatus @default(NEW)
+  source        String         @default("qr") // "qr" | "direct" | "session"
+  sessionId     String         @default("lecture-101")
+  category      String?
+  upvotes       Int            @default(0)
+  lecturerNotes String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relational expansion support
+  lectureId     String?
+  lecture       Lecture?       @relation(fields: [lectureId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Lecture {
+  id          String     @id @default(cuid())
+  title       String
+  sessionCode String     @unique
+  lecturerId  String?
+  lecturer    Lecturer?  @relation(fields: [lecturerId], references: [id])
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  questions   Question[]
+}
+
+model Lecturer {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  role      String    @default("LECTURER")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  lectures  Lecture[]
+}
